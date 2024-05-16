@@ -1,0 +1,70 @@
+@startuml
+' Setting the layout direction
+top to bottom direction
+
+package model {
+    class Board {
+
+    }
+
+    class Block {
+
+    }
+
+    class Position {
+
+    }
+
+    class Queen {
+
+    }
+
+    class Model {
+
+    }
+
+    ' Define associations and dependencies
+    Board "1" *-- "many" Piece : contains
+    Board *-- "many" Position : uses >
+    Board *-- "many" Block : contains >
+    Block *-- Position : positioned at
+    Queen *-- Position : positioned at
+    Model "1" o-- "many" Queen : tracks >
+    Model "1" o-- "many" Position : manages >
+    Model "1" o-- "many" Block : manages >
+}
+
+class Move {
+
+}
+
+class Controller {
+
+}
+
+Controller ..> Model : uses >
+Controller ..> View : updates >
+Controller ..> MCTS : uses AI >
+
+class MCTS {
+
+}
+
+MCTS "1" - "1" TreeNode : contains >
+MCTS ..> Model : modifies >
+TreeNode ..> Move : evaluates >
+Model -- Move : uses >
+
+class TreeNode {
+
+}
+
+class View {
+
+}
+
+' External relationships
+Controller -- View : updates >
+Model -- View : interacts >
+
+@enduml
