@@ -296,11 +296,7 @@ public class Model {
     }
 
 
-    public boolean isAggressiveMove(ArrayList<Position> move) {
-        if(IsAggresive(move.get(0)))
-            return true;
-        return false;
-    }
+
 
     public boolean checkIfMoveIsRelevante(ArrayList<Position> move)
     {
@@ -309,13 +305,11 @@ public class Model {
         boolean isDefensive = isDefensiveMove(move);
 
         // Check if the move puts pressure on the opponent's position
-        boolean isAggressive = isAggressiveMove(move);
+        boolean isAggressive = IsAggresive(move.get(0));
 
         // Evaluate the overall quality of the move based on defensive and aggressive factors
-        if (isDefensive && isAggressive) {
+        if (isDefensive || isAggressive) {
             return true; // Good move
-        } else if (isDefensive) {
-            return true; // Decent move
         } else {
             return false; // Poor move
         }
@@ -354,7 +348,7 @@ public class Model {
                 if (r != p.getX() || c != p.getY()) {
                     // Check if the current cell is within the boundaries of the board
                     if (r >= 0 && r < b.ROWS && c >= 0 && c < b.COLS) {
-                        // Check if there is a queen in the current cell and it's not the same color as the current player
+                        // Check if there is a queen in the current cell
                         if (b.getGameBoard()[r][c] instanceof Queen && ((Queen) b.getGameBoard()[r][c]).getColor() == Color.white)
                         {
                             CountQueens++;

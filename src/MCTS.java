@@ -41,6 +41,12 @@ public class MCTS {
     }
 
     //the selection part, uses the ucb formula to decide which node to investigate
+
+    /**
+     *
+     * @param node
+     * @return
+     */
     private TreeNode selection(TreeNode node) {
 
         Random random = new Random();
@@ -76,7 +82,7 @@ public class MCTS {
 
 
 
-    //expanding a specific node - adds all the possible moves
+    //expanding a specific node - adds all the relevante moves
     private void expand(TreeNode node) {
         for (Queen q : node.getM().getQueens())
             if (q.getColor() == Color.black) {
@@ -105,6 +111,10 @@ public class MCTS {
 
     }
 
+    /**
+     *
+     * @param node
+     */
     private void expandWhenEmpty(TreeNode node)
     {
         for (Queen q : node.getM().getQueens())
@@ -134,7 +144,6 @@ public class MCTS {
 
     private double simulation(TreeNode node) {
         // Simulate a game from the given node until a terminal state is reached
-        // Use a playout policy to conduct the simulation
         // Return the score of the simulated game
         Model currentModel = node.getM().copy();
 
@@ -249,7 +258,7 @@ public class MCTS {
             return Double.NEGATIVE_INFINITY;
 
         // Calculate the exploitation term
-        double exploitationTerm = (double) node.getScore() / node.getCountVisited();
+        double exploitationTerm = node.getScore() / node.getCountVisited();
 
         // Calculate the exploration term
         double explorationTerm = EXPLORATION_CONSTANT * Math.sqrt(Math.log(node.getParent().getCountVisited() + 1) / (node.getCountVisited() + 1));
