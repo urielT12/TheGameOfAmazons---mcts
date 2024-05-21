@@ -295,28 +295,9 @@ public class Model {
         return false;
     }
 
-    public boolean isAdjacentToOpponentQueen(Position p) {
-        // Iterate over all neighboring cells around the given position, including diagonals
-        for (int r = Math.max(0, p.getX() - 1); r <= Math.min(p.getX() + 1, b.ROWS - 1); r++) {
-            for (int c = Math.max(0, p.getY() - 1); c <= Math.min(p.getY() + 1, b.COLS - 1); c++) {
-                // Check that the current cell is not the same as the given position
-                if (r != p.getX() || c != p.getY()) {
-                    // Check if the current cell is within the boundaries of the board
-                    if (r >= 0 && r < b.ROWS && c >= 0 && c < b.COLS) {
-                        // Check if there is a queen in the current cell and it's not the same color as the current player
-                        if (b.getGameBoard()[r][c] instanceof Queen && ((Queen) b.getGameBoard()[r][c]).getColor() == Color.white) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        // If no queen of a different color was found adjacent to the given position, return false
-        return false;
-    }
 
     public boolean isAggressiveMove(ArrayList<Position> move) {
-        if(isAdjacentToOpponentQueen(move.get(0)))
+        if(IsAggresive(move.get(0)))
             return true;
         return false;
     }

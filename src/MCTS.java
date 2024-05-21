@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class MCTS {
+    private static final double EXPLORATION_CONSTANT = Math.sqrt(2);
 
     public TreeNode root;
 
@@ -20,7 +21,7 @@ public class MCTS {
     public ArrayList<Position> runIterations() {
 
         int i = 0;
-        while (i < 400) {
+        while (i < 550) {
             // Selection
             TreeNode selectedNode = selection(root);
 
@@ -35,11 +36,11 @@ public class MCTS {
             i++;
         }
         ArrayList<Position> selected = getBestMove();
-
+        //first - arrow , second - dest,  third - queen
         return selected;
     }
 
-
+    //the selection part, uses the ucb formula to decide which node to investigate
     private TreeNode selection(TreeNode node) {
 
         Random random = new Random();
@@ -74,6 +75,8 @@ public class MCTS {
     }
 
 
+
+    //expanding a specific node - adds all the possible moves
     private void expand(TreeNode node) {
         for (Queen q : node.getM().getQueens())
             if (q.getColor() == Color.black) {
@@ -204,20 +207,24 @@ public class MCTS {
         // Iterate through the children of the root node to find the best move
         while (i < root.getChildren().size()) {
             // Calculate a score for each child node (e.g., based on visit count or accumulated score)
-            double score = (double) root.getChildren().get(i).getScore() / root.getChildren().get(i).getCountVisited();
+            double score =  root.getChildren().get(i).getScore() / (double) root.getChildren().get(i).getCountVisited();
+            if(Double.isNaN(score))
+                score = 0.0;
             if (score >= bestScore) {
                 bestScore = score;
                 bestChild = root.getChildren().get(i);
             }
 
 
-
-
-            if(m.IsAggresive(root.getChildren().get(i).getMove().get(0)))
+            if(root.getChildren().get(i).getM().IsAggresive(root.getChildren().get(i).getMove().get(0)))
             {
-                bestAggresive = root.getChildren().get(i);
-                bestScore = score;
+                if (score >= bestAggresiveScore) {
+                    bestAggresiveScore = score;
+                    bestAggresive = root.getChildren().get(i);
+                }
             }
+
+
 
             if(m.checkWaysToMove(root.getChildren().get(i).getMove().get(2)) <= 2)
             {
@@ -235,6 +242,8 @@ public class MCTS {
         return bestChild.getMove();
     }
 
+
+
     private double calculateUCB(TreeNode node) {
         if (node.getCountVisited() == 0)
             return Double.NEGATIVE_INFINITY;
@@ -243,7 +252,8 @@ public class MCTS {
         double exploitationTerm = (double) node.getScore() / node.getCountVisited();
 
         // Calculate the exploration term
-        double explorationTerm = Math.sqrt(2 * Math.log(node.getParent().getCountVisited()) / node.getCountVisited());
+        double explorationTerm = EXPLORATION_CONSTANT * Math.sqrt(Math.log(node.getParent().getCountVisited() + 1) / (node.getCountVisited() + 1));
+
         return exploitationTerm + explorationTerm;
     }
 
